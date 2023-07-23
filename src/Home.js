@@ -1,5 +1,6 @@
 import html2canvas from "html2canvas";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import FontPicker from "font-picker-react";
 
 function Home() {
   // imports
@@ -13,9 +14,25 @@ function Home() {
   const [finalImageWidth, setFinalImageWidth] = useState(0);
   const [finalImageHeight, setFinalImageHeight] = useState(0);
   const [text, setText] = useState("Hello");
+  const [fontColor, setFontColor] = useState("#000000");
+  const [bgColor, setBgColor] = useState("transparent");
   const [fontSize, setFontSize] = useState(16);
-  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontWeight, setFontWeight] = useState(400);
+  const [fontFamily, setFontFamily] = useState("Open Sans");
   const [fontsList, setFontsList] = useState([]); // [{name: "Arial", url: "https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"}
+
+  // Variables
+  const fontWeights = {
+    Thin: 100,
+    ExtraLight: 200,
+    Light: 300,
+    Regular: 400,
+    Medium: 500,
+    SemiBold: 600,
+    Bold: 700,
+    ExtraBold: 800,
+    Black: 900,
+  };
 
   // Refs
   const parentRef = useRef(null);
@@ -95,7 +112,8 @@ function Home() {
   };
 
   const handleFontFamilyChange = (e) => {
-    setFontFamily(e.target.value);
+    console.log("first", e.target);
+    // setFontFamily(e.target.value);
   };
 
   const resetAllStates = () => {
@@ -107,36 +125,6 @@ function Home() {
     setFinalImageWidth(0);
     setFinalImageHeight(0);
   };
-
-  const apiKey = "AIzaSyAS5dU5lthauydMnPv03IL8lBYhKnwmsaM";
-
-  //  Use Effects
-
-  useEffect(() => {
-    fetch(
-      `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}&capability=WOFF2`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("first", data.items);
-        const fonts = data.items.map((font) => font.family);
-        setFontsList(fonts);
-      })
-      .catch((err) => console.error("Error fetching Google Fonts:", err));
-  }, []);
-
-  useEffect(() => {
-    // Update the Google Fonts link when selectedFont changes
-    if (fontFamily) {
-      const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
-        fontFamily
-      )}:wght@400;700&display=swap`;
-      const fontLink = document.getElementById("google-fonts-link");
-      if (fontLink) {
-        fontLink.href = fontUrl;
-      }
-    }
-  }, []);
 
   return (
     <>
@@ -191,13 +179,16 @@ function Home() {
                 draggable="false"
               />
               <p
-                className={`absolute ${
+                className={`apply-font absolute ${
                   isDragging ? "cursor-grabbing" : "cursor-grab"
                 }`}
                 style={{
                   left: position.x,
                   top: position.y,
+                  color: `${fontColor}`,
+                  backgroundColor: `${bgColor}`,
                   fontSize: `${fontSize}px`,
+                  fontWeight: fontWeight,
                   fontFamily: `${fontFamily}`,
                 }}
                 draggable="true"
@@ -213,54 +204,106 @@ function Home() {
         {isSelected && (
           <div className="flex w-full max-w-[calc(100vw-64px)] gap-4 fixed bottom-4 justify-between">
             <button
-              className="px-5 py-3 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-red-600 hover:bg-red-400"
+              className="px-6 py-2 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-red-600 hover:bg-red-400"
               onClick={resetAllStates}
             >
               <h1 className="cursor-pointer">Start Over</h1>
             </button>
             <div className="flex flex-col gap-1">
-              <p>Enter text to display</p>
+              <label className="text-md">Enter text to display</label>
               <input
                 type="text"
-                className="border border-gray-400 rounded-lg p-1"
+                placeholder="Hello"
+                className="rounded-md px-2.5 py-1 shadow-md"
                 onChange={(e) => setText(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
-              <p>Font Size</p>
+              <label className="text-md">Font Color</label>
+              <div className="flex gap-2">
+                <div
+                  className="relative w-8 h-8 rounded-sm border border-neutral-700"
+                  style={{ backgroundColor: `${fontColor}` }}
+                >
+                  <input
+                    type="color"
+                    className="absolute w-full h-full opacity-0"
+                    value={fontColor}
+                    onChange={(e) => setFontColor(e.target.value)}
+                  />
+                </div>
+                <input
+                  type="text"
+                  className="rounded-md px-2.5 py-1 shadow-md"
+                  value={fontColor}
+                  onChange={(e) => setFontColor(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-md">Background Color</label>
+              <div className="flex gap-2">
+                <div
+                  className="relative w-8 h-8 rounded-sm border border-neutral-700"
+                  style={{ backgroundColor: `${bgColor}` }}
+                >
+                  <input
+                    type="color"
+                    className="absolute w-full h-full opacity-0"
+                    value={bgColor}
+                    onChange={(e) => setBgColor(e.target.value)}
+                  />
+                </div>
+                <input
+                  type="text"
+                  className="rounded-md px-2.5 py-1 shadow-md"
+                  value={bgColor}
+                  onChange={(e) => setBgColor(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-md">Font Size</label>
               <input
                 type="text"
-                className="border border-gray-400 rounded-lg p-1"
+                className="rounded-md px-2.5 py-1 shadow-md"
                 value={fontSize}
                 onChange={(e) =>
-                  e.target.value < 32
+                  e.target.value < 72
                     ? setFontSize(e.target.value)
-                    : setFontSize(32)
+                    : setFontSize(72)
                 }
               />
             </div>
             <div className="flex flex-col gap-1">
-              <p>Font Family</p>
-              <select
-                className="border border-gray-400 rounded-lg p-1"
-                onChange={handleFontFamilyChange}
-                value={fontFamily}
-              >
-                <option value="">Select a font</option>
-                {fontsList.map((font, index) => (
-                  <option
-                    key={index}
-                    value={font}
-                    style={{ fontFamily: font }} // Apply font family to each option
-                  >
-                    {font}
-                  </option>
-                ))}
+              <label className="text-md">Font Weight</label>
+              <select className="rounded-md px-2.5 py-1 shadow-md w-full">
+                {Object.keys(fontWeights).map((weightTitle) => {
+                  return (
+                    <option
+                      value={weightTitle}
+                      onChange={setFontWeight(fontWeights[weightTitle])}
+                    >
+                      {weightTitle}
+                    </option>
+                  );
+                })}
               </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-md">Font Family</label>
+              <FontPicker
+                apiKey="AIzaSyAS5dU5lthauydMnPv03IL8lBYhKnwmsaM"
+                activeFontFamily={fontFamily}
+                onChange={(nextFont) => {
+                  setFontFamily(nextFont.family);
+                }}
+                // onChange={handleFontFamilyChange}
+              />
             </div>
             <button
               onClick={downloadImage}
-              className="px-5 py-3 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-green-600 animate-bounce"
+              className="px-6 py-2 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-green-600 animate-bounce"
             >
               Download Image
             </button>
