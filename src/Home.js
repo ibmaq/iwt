@@ -16,23 +16,8 @@ function Home() {
   const [text, setText] = useState("Hello");
   const [fontColor, setFontColor] = useState("#000000");
   const [bgColor, setBgColor] = useState("transparent");
-  const [fontSize, setFontSize] = useState(16);
-  const [fontWeight, setFontWeight] = useState(400);
+  const [fontSize, setFontSize] = useState(24);
   const [fontFamily, setFontFamily] = useState("Open Sans");
-  const [fontsList, setFontsList] = useState([]); // [{name: "Arial", url: "https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"}
-
-  // Variables
-  const fontWeights = {
-    Thin: 100,
-    ExtraLight: 200,
-    Light: 300,
-    Regular: 400,
-    Medium: 500,
-    SemiBold: 600,
-    Bold: 700,
-    ExtraBold: 800,
-    Black: 900,
-  };
 
   // Refs
   const parentRef = useRef(null);
@@ -111,11 +96,6 @@ function Home() {
     });
   };
 
-  const handleFontFamilyChange = (e) => {
-    console.log("first", e.target);
-    // setFontFamily(e.target.value);
-  };
-
   const resetAllStates = () => {
     setSelectedFile(null);
     setIsSelected(false);
@@ -129,9 +109,10 @@ function Home() {
   return (
     <>
       <div className="p-8 w-full h-screen flex flex-col gap-4 bg-sky-100 relative">
+        {/* Upload image section */}
         {!isSelected && (
           <div
-            className="p-4 bg-white rounded-lg capitalize transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg w-full max-w-[600px] mx-auto relative"
+            className="p-4 bg-white rounded-lg capitalize transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg w-full max-w-[600px] mx-auto my-auto relative"
             onClick={resetAllStates}
           >
             <div className="flex flex-col gap-4 justify-center items-center border border-dashed border-gray-400 rounded-lg p-4 cursor-pointer">
@@ -144,15 +125,18 @@ function Home() {
                 Click here to upload your image
               </h1>
             </div>
-            <input
-              type="file"
-              id="file"
-              name="file"
-              className="absolute top-0 left-0 w-full h-full opacity-0"
-              onChange={handleImageUpload}
-            ></input>
+            <label className="cursor-pointer absolute top-0 left-0 w-full h-full">
+              <input
+                type="file"
+                id="file"
+                name="file"
+                className="absolute top-0 left-0 w-full h-full opacity-0 vi cursor-pointer"
+                onChange={handleImageUpload}
+              ></input>
+            </label>
           </div>
         )}
+        {/* Image Preview */}
         {isSelected && (
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl leading-none font-semibold">
@@ -188,7 +172,6 @@ function Home() {
                   color: `${fontColor}`,
                   backgroundColor: `${bgColor}`,
                   fontSize: `${fontSize}px`,
-                  fontWeight: fontWeight,
                   fontFamily: `${fontFamily}`,
                 }}
                 draggable="true"
@@ -201,14 +184,17 @@ function Home() {
             </div>
           </div>
         )}
+        {/* Bottom Bar */}
         {isSelected && (
           <div className="flex w-full max-w-[calc(100vw-64px)] gap-4 fixed bottom-4 justify-between">
+            {/* Start Over Button */}
             <button
               className="px-6 py-2 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-red-600 hover:bg-red-400"
               onClick={resetAllStates}
             >
               <h1 className="cursor-pointer">Start Over</h1>
             </button>
+            {/* Enter text to display */}
             <div className="flex flex-col gap-1">
               <label className="text-md">Enter text to display</label>
               <input
@@ -218,8 +204,9 @@ function Home() {
                 onChange={(e) => setText(e.target.value)}
               />
             </div>
+            {/* Font Color */}
             <div className="flex flex-col gap-1">
-              <label className="text-md">Font Color</label>
+              <label className="text-md">Text Font Color</label>
               <div className="flex gap-2">
                 <div
                   className="relative w-8 h-8 rounded-sm border border-neutral-700"
@@ -240,8 +227,9 @@ function Home() {
                 />
               </div>
             </div>
+            {/* Background Color */}
             <div className="flex flex-col gap-1">
-              <label className="text-md">Background Color</label>
+              <label className="text-md">Text Background Color</label>
               <div className="flex gap-2">
                 <div
                   className="relative w-8 h-8 rounded-sm border border-neutral-700"
@@ -262,8 +250,9 @@ function Home() {
                 />
               </div>
             </div>
+            {/* Font Size */}
             <div className="flex flex-col gap-1">
-              <label className="text-md">Font Size</label>
+              <label className="text-md">Text Font Size</label>
               <input
                 type="text"
                 className="rounded-md px-2.5 py-1 shadow-md"
@@ -275,35 +264,32 @@ function Home() {
                 }
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-md">Font Weight</label>
-              <select className="rounded-md px-2.5 py-1 shadow-md w-full">
-                {Object.keys(fontWeights).map((weightTitle) => {
-                  return (
-                    <option
-                      value={weightTitle}
-                      onChange={setFontWeight(fontWeights[weightTitle])}
-                    >
-                      {weightTitle}
-                    </option>
-                  );
-                })}
+            {/* Font Weight */}
+            {/* <div className="flex flex-col gap-1">
+              <label className="text-md">Font Style</label>
+              <select
+                className="rounded-md px-2.5 py-1 shadow-md w-full"
+                onChange={(e) => setFontWeight(e.target.value)}
+              >
               </select>
-            </div>
+            </div> */}
+            {/* Font Family */}
             <div className="flex flex-col gap-1">
-              <label className="text-md">Font Family</label>
+              <label className="text-md">Text Font Family</label>
               <FontPicker
                 apiKey="AIzaSyAS5dU5lthauydMnPv03IL8lBYhKnwmsaM"
                 activeFontFamily={fontFamily}
                 onChange={(nextFont) => {
                   setFontFamily(nextFont.family);
                 }}
+                limit={500}
                 // onChange={handleFontFamilyChange}
               />
             </div>
+            {/* Download Image */}
             <button
               onClick={downloadImage}
-              className="px-6 py-2 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-green-600 animate-bounce"
+              className="px-6 py-2 text-white rounded-lg capitalize relative transition-all ease-in-out duration-300 shadow-sm hover:shadow-lg bg-green-600 animate-pulse"
             >
               Download Image
             </button>
